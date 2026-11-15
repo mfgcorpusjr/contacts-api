@@ -1,10 +1,10 @@
 import type { Request, Response } from "express";
 
-import { signUpSchema } from "./auth.schemas.js";
-import { hashPassword } from "../../lib/bcrypt.js";
+import { signUpSchema, signInSchema } from "./auth.schemas.js";
+import { hashPassword, comparePassword } from "../../lib/bcrypt.js";
 import { signToken } from "../../lib/jwt.js";
 import { prisma } from "../../lib/prisma.js";
-import { BadRequestError } from "../../utils/error.js";
+import { BadRequestError, UnauthorizedError } from "../../utils/error.js";
 
 export const signUp = async (req: Request, res: Response) => {
   const { email, password, name } = signUpSchema.parse(req.body);
@@ -37,4 +37,38 @@ export const signUp = async (req: Request, res: Response) => {
   const token = signToken({ id: user.id });
 
   res.status(201).json({ success: true, data: { user, token } });
+};
+
+export const signIn = async (req: Request, res: Response) => {
+  const { email, password } = signInSchema.parse(req.body);
+
+  const user = await prisma.user.findUnique({
+    where: {
+      email,
+    },
+  });
+
+  if (!user) {
+    throw new UnauthorizedError("Invalid email or password.");
+  }
+
+  const isValidPassword = await comparePassword(password, user.password);
+
+  if (!isValidPassword) {
+    throw new UnauthorizedError("Invalid email or password.");
+  }
+
+  const token = signToken({ id: user.id });
+
+  res.json({
+    success: true,
+    data: {
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+      },
+      token,
+    },
+  });
 };

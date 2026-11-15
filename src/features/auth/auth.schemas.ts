@@ -11,3 +11,11 @@ export const signUpSchema = z.object({
     .trim()
     .min(1, { error: "Name is required." }),
 });
+
+export const signInSchema = z.object({
+  email: z.email({ error: "Invalid email." }),
+  password: z
+    .string({ error: "Password is required." })
+    .trim()
+    .min(1, { error: "Password is required." }),
+});
