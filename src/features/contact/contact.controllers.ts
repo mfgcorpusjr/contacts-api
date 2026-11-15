@@ -54,18 +54,18 @@ export const getAll = async (req: AuthenticatedRequest, res: Response) => {
 export const get = async (req: AuthenticatedRequest, res: Response) => {
   const { id } = req.params;
 
-  const contact = await prisma.contact.findUnique({
+  const existingContact = await prisma.contact.findUnique({
     where: {
       id: id as string,
       userId: req.user!.id,
     },
   });
 
-  if (!contact) {
+  if (!existingContact) {
     throw new NotFoundError("No contact found.");
   }
 
-  res.json({ success: true, data: contact });
+  res.json({ success: true, data: existingContact });
 };
 
 export const create = async (req: AuthenticatedRequest, res: Response) => {
@@ -112,4 +112,28 @@ export const update = async (req: AuthenticatedRequest, res: Response) => {
   });
 
   res.json({ success: true, data: contact });
+};
+
+export const destroy = async (req: AuthenticatedRequest, res: Response) => {
+  const { id } = req.params;
+
+  const existingContact = await prisma.contact.findUnique({
+    where: {
+      id: id as string,
+      userId: req.user!.id,
+    },
+  });
+
+  if (!existingContact) {
+    throw new NotFoundError("No contact found.");
+  }
+
+  await prisma.contact.delete({
+    where: {
+      id: id as string,
+      userId: req.user!.id,
+    },
+  });
+
+  res.json({ success: true, message: "Contact deleted." });
 };
