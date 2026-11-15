@@ -4,6 +4,7 @@ import { getAllQuerySchema } from "./contact.schemas.js";
 import type { AuthenticatedRequest } from "../auth/auth.types.js";
 import { prisma } from "../../lib/prisma.js";
 import type { ContactWhereInput } from "../../generated/prisma/models.js";
+import { NotFoundError } from "../../utils/error.js";
 
 export const getAll = async (req: AuthenticatedRequest, res: Response) => {
   const { page, pageSize, search } = getAllQuerySchema.parse(req.query);
@@ -45,4 +46,21 @@ export const getAll = async (req: AuthenticatedRequest, res: Response) => {
       totalPages: Math.ceil(totalItems / pageSize),
     },
   });
+};
+
+export const get = async (req: AuthenticatedRequest, res: Response) => {
+  const { id } = req.params;
+
+  const contact = await prisma.contact.findUnique({
+    where: {
+      id: id as string,
+      userId: req.user!.id,
+    },
+  });
+
+  if (!contact) {
+    throw new NotFoundError("No contact found.");
+  }
+
+  res.json({ success: true, data: contact });
 };

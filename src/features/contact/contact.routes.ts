@@ -8,5 +8,6 @@ const router = Router();
 router.use(authenticate);
 
 router.get("/", contactControllers.getAll);
+router.get("/:id", contactControllers.get);
 
 export default router;
