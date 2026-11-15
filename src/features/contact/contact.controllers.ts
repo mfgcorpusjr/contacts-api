@@ -1,13 +1,16 @@
 import type { Response } from "express";
 
-import { getAllQuerySchema } from "./contact.schemas.js";
+import {
+  getAllContactsQuerySchema,
+  upsertContactSchema,
+} from "./contact.schemas.js";
 import type { AuthenticatedRequest } from "../auth/auth.types.js";
 import { prisma } from "../../lib/prisma.js";
 import type { ContactWhereInput } from "../../generated/prisma/models.js";
 import { NotFoundError } from "../../utils/error.js";
 
 export const getAll = async (req: AuthenticatedRequest, res: Response) => {
-  const { page, pageSize, search } = getAllQuerySchema.parse(req.query);
+  const { page, pageSize, search } = getAllContactsQuerySchema.parse(req.query);
 
   const where: ContactWhereInput = {
     userId: req.user!.id,
@@ -63,4 +66,19 @@ export const get = async (req: AuthenticatedRequest, res: Response) => {
   }
 
   res.json({ success: true, data: contact });
+};
+
+export const create = async (req: AuthenticatedRequest, res: Response) => {
+  const data = upsertContactSchema.parse(req.body);
+
+  const contact = await prisma.contact.create({
+    data: {
+      ...data,
+      phone: data.phone || null,
+      address: data.address || null,
+      userId: req.user!.id,
+    },
+  });
+
+  res.status(201).json({ success: true, data: contact });
 };

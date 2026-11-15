@@ -9,5 +9,6 @@ router.use(authenticate);
 
 router.get("/", contactControllers.getAll);
 router.get("/:id", contactControllers.get);
+router.post("/", contactControllers.create);
 
 export default router;
