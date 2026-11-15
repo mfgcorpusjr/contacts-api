@@ -82,3 +82,34 @@ export const create = async (req: AuthenticatedRequest, res: Response) => {
 
   res.status(201).json({ success: true, data: contact });
 };
+
+export const update = async (req: AuthenticatedRequest, res: Response) => {
+  const { id } = req.params;
+
+  const existingContact = await prisma.contact.findUnique({
+    where: {
+      id: id as string,
+      userId: req.user!.id,
+    },
+  });
+
+  if (!existingContact) {
+    throw new NotFoundError("No contact found.");
+  }
+
+  const data = upsertContactSchema.parse(req.body);
+
+  const contact = await prisma.contact.update({
+    data: {
+      ...data,
+      phone: data.phone || null,
+      address: data.address || null,
+    },
+    where: {
+      id: id as string,
+      userId: req.user!.id,
+    },
+  });
+
+  res.json({ success: true, data: contact });
+};

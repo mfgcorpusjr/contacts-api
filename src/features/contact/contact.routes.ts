@@ -10,5 +10,6 @@ router.use(authenticate);
 router.get("/", contactControllers.getAll);
 router.get("/:id", contactControllers.get);
 router.post("/", contactControllers.create);
+router.patch("/:id", contactControllers.update);
 
 export default router;
