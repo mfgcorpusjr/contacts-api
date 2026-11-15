@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 
 import authRoutes from "./features/auth/auth.routes.js";
+import contactRoutes from "./features/contact/contact.routes.js";
 import { catchAll, error } from "./middlewares/error.middleware.js";
 
 const app = express();
@@ -14,6 +15,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/auth", authRoutes);
+app.use("/api/contacts", contactRoutes);
 
 app.use(catchAll);
 app.use(error);
