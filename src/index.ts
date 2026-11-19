@@ -1,4 +1,5 @@
 import express, { type Request, type Response } from "express";
+import "dotenv/config";
 import cors from "cors";
 
 import authRoutes from "./features/auth/auth.routes.js";
@@ -14,8 +15,8 @@ app.get("/", (req: Request, res: Response) => {
   res.json({ success: true, message: "Contacts API" });
 });
 
-app.use("/api/auth", authRoutes);
-app.use("/api/contacts", contactRoutes);
+app.use("/api/v1/auth", authRoutes);
+app.use("/api/v1/contacts", contactRoutes);
 
 app.use(catchAll);
 app.use(error);
