@@ -11,8 +11,8 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.get("/", (req: Request, res: Response) => {
-  res.json({ success: true, message: "Contacts API" });
+app.get("/health", (req: Request, res: Response) => {
+  res.json({ success: true, service: "Contacts API" });
 });
 
 app.use("/api/v1/auth", authRoutes);
