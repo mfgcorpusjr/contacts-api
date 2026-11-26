@@ -3,10 +3,14 @@ import "dotenv/config";
 import cors from "cors";
 import helmet from "helmet";
 
+import authRoutes from "./features/auth/auth.routes.js";
+import { catchAll, error } from "./middlewares/error.middleware.js";
+
 const app = express();
 
 app.use(cors());
 app.use(helmet());
+app.use(express.json());
 
 app.get("/health", (req: Request, res: Response) => {
   res.json({
@@ -14,6 +18,11 @@ app.get("/health", (req: Request, res: Response) => {
     service: "Contacts API",
   });
 });
+
+app.use("/api/v1/auth", authRoutes);
+
+app.use(catchAll);
+app.use(error);
 
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
