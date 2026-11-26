@@ -4,6 +4,7 @@ import cors from "cors";
 import helmet from "helmet";
 
 import authRoutes from "./features/auth/auth.routes.js";
+import contactRoutes from "./features/contact/contact.routes.js";
 import { catchAll, error } from "./middlewares/error.middleware.js";
 
 const app = express();
@@ -20,6 +21,7 @@ app.get("/health", (req: Request, res: Response) => {
 });
 
 app.use("/api/v1/auth", authRoutes);
+app.use("/api/v1/contacts", contactRoutes);
 
 app.use(catchAll);
 app.use(error);
