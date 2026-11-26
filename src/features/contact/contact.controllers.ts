@@ -6,7 +6,10 @@ import {
 } from "./contact.schemas.js";
 import type { AuthenticatedRequest } from "../auth/auth.types.js";
 import { prisma } from "../../lib/prisma.js";
-import type { ContactWhereInput } from "../../generated/prisma/models.js";
+import type {
+  ContactWhereInput,
+  ContactWhereUniqueInput,
+} from "../../generated/prisma/models.js";
 import { NotFoundError } from "../../utils/error.js";
 
 export const getContacts = async (req: AuthenticatedRequest, res: Response) => {
@@ -86,6 +89,42 @@ export const getContact = async (req: AuthenticatedRequest, res: Response) => {
   if (!contact) {
     throw new NotFoundError("No contact found.");
   }
+
+  res.json({
+    success: true,
+    data: contact,
+  });
+};
+
+export const updateContact = async (
+  req: AuthenticatedRequest,
+  res: Response,
+) => {
+  const { id } = req.params;
+
+  const where: ContactWhereUniqueInput = {
+    id: id as string,
+    userId: req.user!.id,
+  };
+
+  const existingContact = await prisma.contact.findUnique({
+    where,
+  });
+
+  if (!existingContact) {
+    throw new NotFoundError("No contact found.");
+  }
+
+  const data = upsertContactSchema.parse(req.body);
+
+  const contact = await prisma.contact.update({
+    data: {
+      ...data,
+      phone: data.phone || null,
+      address: data.address || null,
+    },
+    where,
+  });
 
   res.json({
     success: true,
