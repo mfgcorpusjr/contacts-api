@@ -22,20 +22,24 @@ export const upsertContactSchema = z.object({
   firstName: z
     .string({ error: "First name is required." })
     .trim()
-    .min(1, { error: "First name must be at least 1 character." }),
+    .min(1, { error: "First name must be at least 1 character." })
+    .max(191, { error: "First name cannot exceed more than 191 characters." }),
   lastName: z
     .string({ error: "Last name is required." })
     .trim()
-    .min(1, { error: "Last name must be at least 1 character." }),
+    .min(1, { error: "Last name must be at least 1 character." })
+    .max(191, { error: "Last name cannot exceed more than 191 characters." }),
   email: z.email({ error: "Email is required." }),
   phone: z
     .string({ error: "Phone must be a string." })
     .trim()
     .min(1, { error: "Phone must be at least 1 character." })
+    .max(191, { error: "Phone cannot exceed more than 191 characters." })
     .optional(),
   address: z
     .string({ error: "Address must be a string." })
     .trim()
     .min(1, { error: "Address must be at least 1 character." })
+    .max(191, { error: "Address cannot exceed more than 191 characters." })
     .optional(),
 });

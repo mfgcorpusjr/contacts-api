@@ -9,7 +9,8 @@ export const signUpSchema = z.object({
   name: z
     .string({ error: "Name is required." })
     .trim()
-    .min(1, { error: "Name is required." }),
+    .min(1, { error: "Name is required." })
+    .max(191, { error: "Name cannot exceed more than 191 characters." }),
 });
 
 export const signInSchema = z.object({
