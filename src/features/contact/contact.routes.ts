@@ -5,6 +5,7 @@ import {
   createContact,
   getContact,
   updateContact,
+  deleteContact,
 } from "./contact.controllers.js";
 import { authenticate } from "../auth/auth.middleware.js";
 
@@ -16,5 +17,6 @@ contactRoutes.get("/", getContacts);
 contactRoutes.post("/", createContact);
 contactRoutes.get("/:id", getContact);
 contactRoutes.patch("/:id", updateContact);
+contactRoutes.delete("/:id", deleteContact);
 
 export default contactRoutes;

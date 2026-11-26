@@ -131,3 +131,32 @@ export const updateContact = async (
     data: contact,
   });
 };
+
+export const deleteContact = async (
+  req: AuthenticatedRequest,
+  res: Response,
+) => {
+  const { id } = req.params;
+
+  const where: ContactWhereUniqueInput = {
+    id: id as string,
+    userId: req.user!.id,
+  };
+
+  const contact = await prisma.contact.findUnique({
+    where,
+  });
+
+  if (!contact) {
+    throw new NotFoundError("No contact found.");
+  }
+
+  await prisma.contact.delete({
+    where,
+  });
+
+  res.json({
+    success: true,
+    message: "Contact deleted.",
+  });
+};
