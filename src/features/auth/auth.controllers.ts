@@ -1,6 +1,7 @@
 import type { Request, Response } from "express";
 
 import { signUpSchema, signInSchema } from "./auth.schemas.js";
+import type { AuthenticatedRequest } from "./auth.types.js";
 import { hashPassword, comparePassword } from "../../lib/bcrypt.js";
 import { signToken } from "../../lib/jwt.js";
 import { prisma } from "../../lib/prisma.js";
@@ -76,5 +77,23 @@ export const signIn = async (req: Request, res: Response) => {
       },
       token,
     },
+  });
+};
+
+export const me = async (req: AuthenticatedRequest, res: Response) => {
+  const user = await prisma.user.findUnique({
+    select: {
+      id: true,
+      email: true,
+      name: true,
+    },
+    where: {
+      id: req.user!.id,
+    },
+  });
+
+  res.json({
+    success: true,
+    data: user,
   });
 };
