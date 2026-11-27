@@ -1,11 +1,14 @@
 import { z } from "zod";
 
 export const signUpSchema = z.object({
-  email: z.email({ error: "Email is required." }),
+  email: z
+    .email({ error: "Email is required." })
+    .max(191, { error: "Email cannot exceed more than 191 characters." }),
   password: z
     .string({ error: "Password is required." })
     .trim()
-    .min(6, { error: "Password must be at least 6 characters." }),
+    .min(6, { error: "Password must be at least 6 characters." })
+    .max(191, { error: "Password cannot exceed more than 191 characters." }),
   name: z
     .string({ error: "Name is required." })
     .trim()
